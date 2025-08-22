@@ -1,0 +1,35 @@
+# Dockerfile para Angular
+FROM node:18-alpine
+
+# Información del mantenedor
+LABEL maintainer="DevOps Team"
+LABEL description="Angular Development Environment"
+
+# Establecer directorio de trabajo
+WORKDIR /app
+
+# Instalar Angular CLI globalmente
+RUN npm install -g @angular/cli@17
+
+# Crear directorio para el código fuente
+RUN mkdir -p /app/src
+
+# Crear una aplicación Angular por defecto si no existe
+RUN if [ ! -f "/app/src/package.json" ]; then \
+        ng new mi-app-angular --routing --style=css --skip-git --directory=/app/temp && \
+        mv /app/temp/* /app/src/ && \
+        mv /app/temp/.* /app/src/ 2>/dev/null || true && \
+        rmdir /app/temp; \
+    fi
+
+# Cambiar al directorio del código fuente
+WORKDIR /app/src
+
+# Instalar dependencias si existe package.json
+RUN if [ -f "package.json" ]; then npm install; fi
+
+# Exponer puerto 4200
+EXPOSE 4200
+
+# Comando por defecto para desarrollo
+CMD ["ng", "serve", "--host", "0.0.0.0", "--port", "4200", "--poll", "2000"]
