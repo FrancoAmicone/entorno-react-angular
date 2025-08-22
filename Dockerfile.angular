@@ -16,10 +16,11 @@ RUN mkdir -p /app/src
 
 # Crear una aplicación Angular por defecto si no existe
 RUN if [ ! -f "/app/src/package.json" ]; then \
-        ng new mi-app-angular --routing --style=css --skip-git --directory=/app/temp && \
-        mv /app/temp/* /app/src/ && \
-        mv /app/temp/.* /app/src/ 2>/dev/null || true && \
-        rmdir /app/temp; \
+        cd /app && \
+        ng new mi-app-angular --routing --style=css --skip-git && \
+        mv mi-app-angular/* /app/src/ && \
+        mv mi-app-angular/.??* /app/src/ 2>/dev/null || true && \
+        rmdir mi-app-angular; \
     fi
 
 # Cambiar al directorio del código fuente
@@ -32,4 +33,4 @@ RUN if [ -f "package.json" ]; then npm install; fi
 EXPOSE 4200
 
 # Comando por defecto para desarrollo
-CMD ["ng", "serve", "--host", "0.0.0.0", "--port", "4200", "--poll", "2000"]
+CMD ["ng", "serve", "--host", "0.0.0.0", "--port", "4200", "--poll", "2000", "--disable-host-check"]
